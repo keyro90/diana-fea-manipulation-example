@@ -1,0 +1,183 @@
+*FILOS
+ INITIA
+*INPUT
+*PHASE LABEL="Phased"
+  BEGIN ACTIVE
+    ELEMEN "Beam1" "Beam2" "Beam3" "Pier1" "Pier2" /
+    REINFO "TendonSupPrestress1" "TendonInf1Prestress1" \
+           "TendonInf2Prestress1" "TendonSupPrestress3" \
+           "TendonInf1Prestress3" "TendonInf2Prestress3" \
+           "TendonSupPrestress2" "TendonInf1Prestress2" \
+           "TendonInf2Prestress2" "TendonInf3Prestress2" /
+    SUPPOR "Phase1" "Support2.1"
+    BEGIN AUTODE
+      INTERF OFF
+      BOUNDA OFF
+    END AUTODE
+  END ACTIVE
+*NONLIN LABEL="Structural nonlinear"
+  BEGIN EXECUT
+    TEXT "LoadStepsSelfWeight+Prestress"
+    BEGIN LOAD
+      LOADNR 1
+      STEPS EXPLIC
+    END LOAD
+    BEGIN ITERAT
+      MAXITE 100
+      METHOD NEWTON
+      LINESE OFF
+      BEGIN CONVER
+        SIMULT ON
+        ENERGY OFF
+      END CONVER
+    END ITERAT
+  END EXECUT
+  SOLVE PARDIS
+  BEGIN OUTPUT
+    TEXT "Output"
+    TABULA
+    LAYOUT
+    BEGIN SELECT
+      NODES 79 /
+      BEGIN ELEMEN NONE /
+        CROSSE ALL /
+        INTPNT ALL /
+        NODES ALL /
+        STRPNT ALL /
+      END ELEMEN
+      BEGIN REINFO NONE /
+        ELEMEN ALL /
+        INTPNT ALL /
+      END REINFO
+      STEPS ALL /
+    END SELECT
+    DISPLA PHASE TRANSL GLOBAL X Y Z
+  END OUTPUT
+*PHASE LABEL="Phased 1"
+  BEGIN ACTIVE
+    ELEMEN "Beam1" "Beam2" "Beam3" "TransversalElement1Pier1" \
+           "TransversalElement2Pier1" "TransversalElement2Pier2" \
+           "TransversalElement1Pier2" "Pier1" "Pier2" /
+    REINFO "TendonSupPrestress1" "TendonInf1Prestress1" \
+           "TendonInf2Prestress1" "TendonSupPrestress3" \
+           "TendonInf1Prestress3" "TendonInf2Prestress3" \
+           "TendonSupPrestress2" "TendonInf1Prestress2" \
+           "TendonInf2Prestress2" "TendonInf3Prestress2" "Reinf1_12@25" \
+           "Reinf1_6@16" "Reinf_36fi10" "Reinf1_24fi10" \
+           "ReinfInf1Slab_44fi12+44fi16" "ReinfInf2Slab_44fi12+44fi16" \
+           "ReinfSup1Slab_48fi12+44fi16" "ReinfSup2Slab_48fi12+44fi16" \
+           "ReinfInf2Slab_44fi12" "ReinfSup2Slab_44fi12" \
+           "ReinfSup3Slab_44fi12" "ReinfInf3Slab_44fi12" \
+           "ReinfSup4Slab_44fi12" "ReinfInf4Slab_44fi12" \
+           "ReinfSup1Pier1_2fi25" "ReinfSup2Pier1_2fi25" \
+           "ReinfSup3Pier1_12fi32+4fi25" "ReinfInf1Pier1_2fi25" \
+           "ReinfInf2Pier1_2fi25" "ReinfInf3Pier1_12fi32+4fi25" \
+           "ReinfSup1Pier2_2fi25" "ReinfSup2Pier2_2fi25" \
+           "ReinfSup3Pier2_12fi32+4fi25" "ReinfInf1Pier2_2fi25" \
+           "ReinfInf2Pier2_2fi25" "ReinfInf3Pier2_12fi32+4fi25" /
+    SUPPOR "Support2.1" "Support2.2"
+    BEGIN AUTODE
+      INTERF OFF
+      BOUNDA OFF
+    END AUTODE
+  END ACTIVE
+*NONLIN LABEL="Structural nonlinear 1"
+  BEGIN EXECUT
+    TEXT "StartStep_PreviousPhase"
+    START STEPS EXPLIC
+    BEGIN PHYSIC
+      BEGIN BOND
+        REINFO ALL /
+        REINFO ALL /
+      END BOND
+      SLIP OFF
+      SUPPRE OFF
+    END PHYSIC
+    BEGIN ITERAT
+      MAXITE 100
+      METHOD NEWTON MODIFI
+      LINESE
+      BEGIN CONVER
+        SIMULT ON
+        ENERGY
+      END CONVER
+    END ITERAT
+  END EXECUT
+  BEGIN EXECUT
+    TEXT "LoadStepPermanentLoad"
+    BEGIN LOAD
+      LOADNR 2
+      STEPS EXPLIC ARCLEN OFF
+    END LOAD
+    BEGIN ITERAT
+      MAXITE 100
+      METHOD NEWTON
+      BEGIN CONVER
+        SIMULT ON
+        ENERGY OFF
+      END CONVER
+    END ITERAT
+  END EXECUT
+  BEGIN EXECUT
+    TEXT "LoadStepsTraffic"
+    BEGIN LOAD
+      LOADNR 3
+      BEGIN STEPS
+        BEGIN AUTOMA
+          SIZES 8
+          MAXSIZ 0.05
+          CUTBCK 0.1
+          BEGIN ARCLEN
+            BEGIN REGULA
+              BEGIN SET
+                NODES 79 /
+                DIRECT 2
+              END SET
+            END REGULA
+            AUTARC OFF
+          END ARCLEN
+          MAXSTP 120
+        END AUTOMA
+      END STEPS
+    END LOAD
+    BEGIN PHYSIC
+      BEGIN BOND
+        REINFO ALL /
+        REINFO ALL /
+      END BOND
+      SLIP OFF
+    END PHYSIC
+    BEGIN ITERAT
+      MAXITE 200
+      METHOD NEWTON MODIFI
+      LINESE OFF
+      BEGIN CONVER
+        SIMULT ON
+        FORCE OFF
+        DISPLA OFF
+        ENERGY TOLCON 0.01
+      END CONVER
+    END ITERAT
+  END EXECUT
+  SOLVE PARDIS
+  BEGIN OUTPUT
+    TEXT "Output"
+    TABULA
+    LAYOUT
+    BEGIN SELECT
+      NODES 79 /
+      BEGIN ELEMEN NONE /
+        CROSSE ALL /
+        INTPNT ALL /
+        NODES ALL /
+        STRPNT ALL /
+      END ELEMEN
+      BEGIN REINFO NONE /
+        ELEMEN ALL /
+        INTPNT ALL /
+      END REINFO
+      STEPS ALL /
+    END SELECT
+    DISPLA PHASE TRANSL GLOBAL X Y Z
+  END OUTPUT
+*END
