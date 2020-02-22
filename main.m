@@ -7,7 +7,7 @@ ANALYSIS_FILE = 'Analysis2D_funzionante.dcf';
 PATH_FILE_DIALOGIN='"C:\Program Files\Diana 10.3\dialogin.bat"';
 BAT_FILE='launch_diana.bat';
 SUFFIX_FILE='filename';
-N_ELEM_GENERATE = 100; % how many elements to generate.
+N_ELEM_GENERATE = 100;
 START_INDEX = 1; % default = 1
 END_INDEX = 100; % default = 100
 % create folder if it doesn't exist.
@@ -127,4 +127,6 @@ for q=START_INDEX:END_INDEX
 end
 
 disp('Im going to plot results.');
+% commenta il grafico che non vuoi vedere.
 plot_result_tb(SUFFIX_FILE, START_INDEX, END_INDEX,FOLDER_SAMPLE);
+plot_histo(FOLDER_SAMPLE);

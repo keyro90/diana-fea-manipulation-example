@@ -1,0 +1,22 @@
+function plot_histo(folder)
+    hold on;
+    figure(2);
+    load_factor_max_csv = [folder '\max_factors.csv'];
+    pdf_file = [folder '\norm.pdf'];
+    max_Values = importdata(load_factor_max_csv);
+    std_values = std(max_Values);
+    mean_values = mean(max_Values);
+    disp(std_values);
+    disp(mean_values);
+    max_Values = round(max_Values,1);
+    mean_str = num2str(mean_values);
+    std_str = num2str(std_values);
+    dim = [0.2 0.5 0.3 0.3];
+    text = {['Std = ' std_str],['Mean = ' mean_str]};
+    annotation('textbox',dim,'String',text,'FitBoxToText','on');
+    histogram(max_Values);
+    norm=histfit(max_Values,10, 'normal');
+    disp(norm);
+%     hold on;
+%     plot(max_Values, p);
+    hold off;

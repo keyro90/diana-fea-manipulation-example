@@ -1,19 +1,15 @@
-function plot_result_tb(filename_tb_prefix, n_elems, folder)
+function plot_result_tb(filename_tb_prefix, start_index, end_index, folder)
 PATH_TB_FILES=folder;
-% I need to match only the 79th node.
 PATTERN_LINE = '79\s+-?[\d\.\+]+E[\+\-]+\d+';
-% Pattern match for scientific format.
 PATTERN_NUM = '-?[\d\.\+]+E[\+\-]+\d+';
-% Pattern match Load Factor line.
 PATTERN_LOAD_FACTOR = 'Load factor';
 AT_ELEMENT_ADD = 4;
-% creating csv file to save all maximum load factor values.
 filename_max_factors = sprintf('%s\\max_factors.csv',PATH_TB_FILES);
 floadfactors = fopen(filename_max_factors,'w+');
-hold on
-for j = 1:n_elems
+hold on;
+figure(1);
+for j = start_index:end_index
     disp(j);
-    % first AT_ELEMENT_ADD elements has load factor = 0 forced.
     delta = -1;
     count = 1;
     not_already_applied = true;
@@ -30,7 +26,7 @@ for j = 1:n_elems
         % i've found a load factor line.
         if (any(regexp(tline, PATTERN_LOAD_FACTOR)) && 1)
             if (count >= AT_ELEMENT_ADD && not_already_applied)
-                delta = -delta;
+                delta = 0;
                 not_already_applied = false;
             end
             [single_match, ] =  regexp(tline, PATTERN_NUM, 'match');
