@@ -1,0 +1,5 @@
+FOLDER_SAMPLE = 'Samples_def_3';
+END_INDEX = 100;
+START_INDEX = 1;
+SUFFIX_FILE='filename';
+plot_result_tb(SUFFIX_FILE, START_INDEX, END_INDEX, FOLDER_SAMPLE);
